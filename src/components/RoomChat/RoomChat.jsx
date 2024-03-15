@@ -8,14 +8,18 @@ import InfoBar from '../InfoBar/InfoBar';
 import Input from '../Input/Input';
 
 import "./RoomChat.css"
+import { useLocation } from "react-router-dom";
 
 // const ENDPOINT = 'localhost:5000';
-const ENDPOINT = 'https://socketroomchatapp.herokuapp.com/';
+const ENDPOINT = 'http://192.168.18.108:5000';
 
 let socket;
 
 
-const RoomChat = ({ location }) => {
+const RoomChat = () => {
+
+    const location = useLocation();
+
     const [name, setName] = useState('');
     const [room, setRoom] = useState('');
     const [users, setUsers] = useState('');
@@ -24,6 +28,7 @@ const RoomChat = ({ location }) => {
 
     useEffect(() => {
         const { name, room } = queryString.parse(location.search);
+        console.log(name,room)
 
         socket = io(ENDPOINT, {
             cors: {
@@ -55,7 +60,7 @@ const RoomChat = ({ location }) => {
         event.preventDefault();
 
         if (message) {
-            socket.emit('sendMessage', message, () => setMessage(''));
+            socket.emit('sendMessage', { room, name, msg: message }, () => setMessage(''));
         }
     }
 
